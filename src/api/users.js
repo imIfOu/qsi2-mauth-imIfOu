@@ -1,12 +1,12 @@
-const express = require("express");
-const jwt = require("jwt-simple");
+const express = require('express');
+const jwt = require('jwt-simple');
 const {
   createUser,
   loginUser,
   updateUser,
-  deleteUser
-} = require("../controller/users");
-const logger = require("../logger");
+  deleteUser,
+} = require('../controller/users');
+const logger = require('../logger');
 
 const apiUsers = express.Router();
 
@@ -27,11 +27,11 @@ const apiUsers = express.Router();
  * @apiSuccess {STRING} token JWT token.
  * @apiSuccess {JSON} profile Profile informations about the User.
  */
-apiUsers.post("/", (req, res) =>
+apiUsers.post('/', (req, res) =>
   !req.body.email || !req.body.password
     ? res.status(400).send({
         success: false,
-        message: "email and password are required"
+        message: 'email and password are required',
       })
     : createUser(req.body)
         .then(user => {
@@ -40,14 +40,14 @@ apiUsers.post("/", (req, res) =>
             success: true,
             token: `JWT ${token}`,
             profile: user,
-            message: "user created"
+            message: 'user created',
           });
         })
         .catch(err => {
           logger.error(`💥 Failed to create user : ${err.stack}`);
           return res.status(500).send({
             success: false,
-            message: `${err.name} : ${err.message}`
+            message: `${err.name} : ${err.message}`,
           });
         })
 );
@@ -66,11 +66,11 @@ apiUsers.post("/", (req, res) =>
  * @apiSuccess {STRING} token JWT token.
  * @apiSuccess {JSON} profile Profile informations about the User.
  */
-apiUsers.post("/login", (req, res) =>
+apiUsers.post('/login', (req, res) =>
   !req.body.email || !req.body.password
     ? res.status(400).send({
         success: false,
-        message: "email and password are required"
+        message: 'email and password are required',
       })
     : loginUser(req.body)
         .then(login => {
@@ -80,52 +80,52 @@ apiUsers.post("/login", (req, res) =>
             success: true,
             token: `JWT ${token}`,
             profile: user,
-            message: "user logged in"
+            message: 'user logged in',
           });
         })
         .catch(err => {
           logger.error(`💥 Failed to login user : ${err.stack}`);
           return res.status(500).send({
             success: false,
-            message: `${err.name} : ${err.message}`
+            message: `${err.name} : ${err.message}`,
           });
         })
 );
 
 const apiUsersProtected = express.Router();
 
-apiUsersProtected.get("/", (req, res) =>
+apiUsersProtected.get('/', (req, res) =>
   res.status(200).send({
     success: true,
     profile: req.user,
-    message: "user logged in"
+    message: 'user logged in',
   })
 );
 
-apiUsersProtected.put("/", (req, res) =>
+apiUsersProtected.put('/', (req, res) =>
   !req.body.email || !req.body.password
     ? res.status(400).send({
         success: false,
-        message: "email and password are required"
+        message: 'email and password are required',
       })
     : updateUser(req.user.id, req.body)
         .then(
           res.status(200).send({
             success: true,
             profile: req.user,
-            message: "user updated"
+            message: 'user updated',
           })
         )
         .catch(err => {
           logger.error(`💥 Failed to update user : ${err.stack}`);
           return res.status(500).send({
             success: false,
-            message: `${err.name} : ${err.message}`
+            message: `${err.name} : ${err.message}`,
           });
         })
 );
 
-apiUsersProtected.delete("/", (req, res) =>
+apiUsersProtected.delete('/', (req, res) =>
   deleteUser(req.user).then(res.status(200).send())
 );
 
